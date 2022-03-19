@@ -13,20 +13,17 @@ from datetime import date, datetime
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///processor.db'
-
-
+processors = ""
+try:
+    # create session and add objects
+    with Session(processorEngine) as session:
+        statement = select(processor)
+        processors = session.execute(statement).all()  
+except Exception as e: print(e)
 @app.route('/')
 def index():
-    try:
-        # create session and add objects
-        with Session(processorEngine) as session:
-            statement = select(processor)
-            processors = session.execute(statement).all()  
-            for row in processors:
-                print(row.processorName)
-            return render_template('index.html', processors=processors)
-    except Exception as e: print(e)
-    return "Somthing wrong!"
+   return render_template('index.html', processors=processors)
+   
     
 
 if __name__ == "__main__":
